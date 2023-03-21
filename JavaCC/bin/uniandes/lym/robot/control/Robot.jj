@@ -8,7 +8,7 @@ Modificado por Silvia Takahashi
 
 
  **/
-//probando commit 
+
 
 options 
 {
@@ -229,7 +229,7 @@ TOKEN :
 	{
 	}
 	{
-	  < PROCS > (
+	  < PROCS > (procedimiento())+
 	  
 	} 
 
@@ -246,9 +246,17 @@ TOKEN :
 	{
 	}
 	{
-	// Parses  L ->  P [,]
+	
 	
 	  < NAME > ( <COMMA> <NAME> )*
+	}
+
+	void procedimiento():
+	{
+	}
+
+	{
+		< NAME > instructionBlock()
 	}
 
 	void instructionBlock() : {}
@@ -259,15 +267,9 @@ TOKEN :
 
 	void instruction() : {}
     {
-        command() | controlStructure() | procedureCall() | <NOP>
+        command() | controlStructure()  | <NOP>
     }
 
-	void procedureCall() : {}
-    {
-        <NAME> <DP> argList()
-    }
-
-	
 	void controlStructure() : {}
     {
         ifControl() | whileControl() | repeatControl()
@@ -275,37 +277,36 @@ TOKEN :
 
     void ifControl() : {}
     {
-        <IF> condition() <THEN> instructionBlock() <ELSE> instructionBlock()
+        <IF> <DP >  condition() <THEN> <DP > instructionBlock() <ELSE> <DP > instructionBlock()
     }
 
     void whileControl() : {}
     {
-        <WHILE> condition() <DO> instructionBlock()
+        <WHILE> <DP > condition() <DO> <DP > instructionBlock()
     }
 
     void repeatControl() : {}
     {
-        <REPEAT> <PABRIR> expression() <PCERRAR> instructionBlock()
+        <REPEAT> <DP > num() <PABRIR> instructionBlock() <PCERRAR> 
     }
 	
 
-	void condition() : {}
-    {
-        facing() | canPut() | canPick() | canMoveInDir() | canJumpInDir()
-        | canMoveToThe()
-
-    
-
-
+	void condition():
+	{
+	}
+	{
+	  facing()| canPut() | canPick()| canMoveInDir()| canJumpInDir()| canMoveToThe()| canJumpToThe()| < NOT > <DP> condition() 
+	}
 
 
+	void facing ():
+	{
+	}
+	{
+	  < FACING > < DP >
 
+	}
 
 
 	
-
-
-
-
-
 
