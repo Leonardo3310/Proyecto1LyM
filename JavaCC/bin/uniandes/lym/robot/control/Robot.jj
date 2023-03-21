@@ -66,28 +66,75 @@ TOKEN: /* Nombres de Comandos */
 		|  < POP: "Pop" >
 		|  <GO: "GO" >
         |  < HOP:  "HOP" >		
-
-}
-
-TOKEN:
-{
-		<BALLOONS:  "BALLOONS" >
+        |  < ASSINGTO:  "Assignto" >
+        |  < GOTO:  "Goto" >
+        |  < MOVE:  "MOVE" >
+        |  < FACE:  "FACE" >
+        |  < TURN:  "TURN" >		
+        |  < MOVETOTHE:  "MOVETOTHE" >
+        |  < MOVEINDIR:  "MOVEINDIR" >
+        |  < JUMPTOTHE:  "JUMPTOTHE" >
+        |  < JUMPINDIR:  "JUMPINDIR" >		
+        |  < NOP:  "NOP" >
+        //CONTROL STRUCTURE		
+        |  < IF:  "IF" >
+        |  < THEN:  "THEN" >
+        |  < ELSE:  "ELSE" >
+        |  < WHILE:  "WHILE" >
+        |  < DO:  "DO" >
+        |  < REPEAT:  "REPEAT" >
+        //CONDITIONALS
+        |  < FACING:  "FACING" >
+        |  < CANPUT:  "canPut" >		
+        |  < CANPICK:  "canPick" >		
+        |  < CANMOVEINDIR:  "canMoveInDir" >		
+        |  < CANJUMPINDIR:  "canJumpInDir" >
+        |  < CANMOVETOTHE:  "canMoveToThe" >	
+        |  < CANJUMPTOTHE:  "canJumpToThe" >
+        |  < NOT:  "NOT" >
+        //simbolos
+        |  < DP:  ":" >
+        |  < PYC:  ";" >
+        |  < COMMA:  "," >
+        | <BALLOONS:  "BALLOONS" >
 		|	<CHIPS:     "CHIPS"  >	
+		|	<VARS:     "VARS"  >	
+		|	<PROCS:     "PROCS"  >
+		|	<ROBOT_R:     "ROBOT_R"  >
+        |	<LEFT_BRACKET:     "["  >
+        |	<RIGHT_BRACKET:     "]"  >
+        |	<PABRIR:     "("  >
+        |	<PCERRAR:     ")"  >
+        
+        		
+        
+        		
+        		
+        		
+        		
+        	
+        	
+        		
 
 }
+
+
 
 
 
 TOKEN :
 {
-		<NUM: (<DIGIT>)+ >
-		|  	<#DIGIT: ["0"-"9"] >
+  		  	<#DIGIT: ["0"-"9"] >
+  		| < #CHAR   : ["a"-"z","A"-"Z","Ñ","ñ"] >
+		| < #ALPHANUM : <CHAR> | <DIGIT> > 
+		| <NUM: (<DIGIT>)+ >
+        | < NAME    : (<CHAR>) ("_" | <ALPHANUM>)* >
+		
         
 }
 
 
-
-	//boolean command(uniandes.lym.robot.view.Console sistema) :
+		//boolean command(uniandes.lym.robot.view.Console sistema) :
 	boolean command(Console sistema):
 	{	
 		
@@ -97,7 +144,8 @@ TOKEN :
 
 	
 	{
-		(		  (
+		(
+		  (
 		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
 		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
 		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
@@ -141,7 +189,7 @@ TOKEN :
 
 	}
 
-	
+
 	
 
 	/**
@@ -170,3 +218,94 @@ TOKEN :
 	}
 
 	
+	void empiezo() :
+	{
+	}
+	{
+	  < ROBOT_R > (variables())? procs()
+	}
+
+	void procs() :
+	{
+	}
+	{
+	  < PROCS > (
+	  
+	} 
+
+
+	void variables():
+	{
+	}
+	{
+	  
+	  < VARS > (listavar())+  < PYC >
+	}
+
+	void listavar():
+	{
+	}
+	{
+	// Parses  L ->  P [,]
+	
+	  < NAME > ( <COMMA> <NAME> )*
+	}
+
+	void instructionBlock() : {}
+    {
+        <LEFT_BRACKET> ( instruction() <PYC> )* <RIGHT_BRACKET>
+    }
+	
+
+	void instruction() : {}
+    {
+        command() | controlStructure() | procedureCall() | <NOP>
+    }
+
+	void procedureCall() : {}
+    {
+        <NAME> <DP> argList()
+    }
+
+	
+	void controlStructure() : {}
+    {
+        ifControl() | whileControl() | repeatControl()
+    }
+
+    void ifControl() : {}
+    {
+        <IF> condition() <THEN> instructionBlock() <ELSE> instructionBlock()
+    }
+
+    void whileControl() : {}
+    {
+        <WHILE> condition() <DO> instructionBlock()
+    }
+
+    void repeatControl() : {}
+    {
+        <REPEAT> <PABRIR> expression() <PCERRAR> instructionBlock()
+    }
+	
+
+	void condition() : {}
+    {
+        facing() | canPut() | canPick() | canMoveInDir() | canJumpInDir()
+        | canMoveToThe()
+
+    
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
