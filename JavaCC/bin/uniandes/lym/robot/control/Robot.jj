@@ -36,6 +36,8 @@ import java.util.LinkedList;
 public class Robot 
 {
 
+  	private HashMap<String, String> procedimientos = new HashMap<String, String>();
+
 
 	private RobotWorldDec world;
 	
@@ -183,11 +185,19 @@ TOKEN :
 	void procedimiento():
 	{
 	}
-
 	{
-		< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET>
+		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> Paramethers=(Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
+		{String nombre = nameProcedimiento.image;
+		String Parame = Paramethers;
+
+		if (procedimiento.containsKey(varName)){
+			throw new Exception("El procedimiento " + nombre + " ya fue creado");
+		}
+		variables.put(nombre, Parame);
+		}
 		
 	}
+
 	
 	void Parametros(): { } {
 	  listavar()
@@ -205,8 +215,21 @@ TOKEN :
 
 	void instruction() : {}
     {
-        command() | controlStructure()  | <NOP> <DP >
+        command() | controlStructure() | createdProdeture() | <NOP> <DP >
     }
+
+void createdProdeture() : {}
+{
+    <NAME> <LEFT_BRACKET> Parametros() <RIGHT_BRACKET>
+    {
+        String nombre = token.image;
+        String args = (String) jjtGetChild(0).jjtAccept(this, null);
+
+        if (!procedimientos.containsKey(nombre)) {
+            throw new Exception("El procedimiento " + nombre + " no ha sido declarado");
+        }
+    }
+}
 
 	void controlStructure() : {}
     {
