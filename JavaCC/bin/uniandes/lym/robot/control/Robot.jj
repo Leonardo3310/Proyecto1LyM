@@ -80,6 +80,10 @@ TOKEN: /* Nombres de Comandos */
         |  < WEST:  "WEST" >		
         |  < SOUTH:  "SOUTH" >		
         |  < EAST:  "EAST" >
+        |  < LEFT:  "LEFT" >
+        |  < AROUND:  "AROUND" >
+        
+        
         //CONTROL STRUCTURE		
         |  < IF:  "IF" >
         |  < THEN:  "THEN" >
@@ -110,6 +114,8 @@ TOKEN: /* Nombres de Comandos */
         |	<PABRIR:     "("  >
         |	<PCERRAR:     ")"  >
 		|	<PALITO:     "|"  >
+		| 	< BACK: "BACK" >
+		| 	< EITHER_FRONT: "EITHER_FRONT" >
         
         		
         
@@ -117,10 +123,8 @@ TOKEN: /* Nombres de Comandos */
         		
         		
         		
-        	
-        	
-        		
-
+     	
+       
 }
 
 
@@ -140,87 +144,7 @@ TOKEN :
 
 
 		//boolean command(uniandes.lym.robot.view.Console sistema) :
-	boolean command(Console sistema):
-	{	
-		
-		int x,y;
-		salida=new String();	
-	}
-
 	
-	{
-		(
-		  (
-		   <RIGHT> "(" ")" {world.turnRight();salida = "Command: Turnright";}
-		| 	<MOV>  "(" x=num() ")" {world.moveForward(x,false);salida = "Command: Moveforward ";}  
-		| 	<HOP>  "(" x=num() ")" {world.moveForward(x,true);salida = "Command:Jumpforward ";}
-		| 	<GO>  "(" x=num() "," y=num()")" {world.setPostion(x,y);salida = "Command:GO ";}  
-		|  <PUT> "("  put() ")"					  			
-		|  <PICK> "(" get()  ")"	
-	    |  < POP > "(" x=num() ")" {world.popBalloons(x); salida = "Comando:  Pop";}
-		) ";" 
-
-		{
-		    try {
-	    			 Thread.sleep(900);
-	    	    } catch (InterruptedException e) {
-	    			        System.err.format("IOException: %s%n", e);
-	    		    }
-	    			 
-			sistema.printOutput(salida);
-			return true;
-		})+
-
-    	| <EOF> {return false;} 
-	}
-
-	void put() :
-	{
-		int f=1;	
-	}
-	{
-		( <CHIPS>    "," f=num() {world.putChips(f); salida = "Command:  Put Chips"; })
-		|  	  ( <BALLOONS>   "," f=num() {world.putBalloons(f); salida = "Command:  Put Balloons";})	 
-
-	}
-
-	void get() :
-	{
-		int f=1;	
-	}
-	{
-		( <CHIPS>   "," f=num() {world.pickChips(f);salida = "Command:  Pick chips";})
-		|  	  ( <BALLOONS>   "," f=num() {world.grabBalloons(f);salida="Command:  Pick balloons";})	 
-
-	}
-
-
-	
-
-	/**
-	 * Unsigned decimal number
-	 * @return the corresponding value of the string
-	 * @error  corresponding value is too large
-	 */
-
-	int num() throws Error:
-	{	
-		int total=1;
-	}
-	{
-		<NUM>
-		{
-			try 
-			{
-				total = Integer.parseInt(token.image);
-			} 
-			catch (NumberFormatException ee) 
-			{
-				throw new Error("Number out of bounds: "+token.image+" !!");
-			}
-			return total;
-		}
-	}
 
 	
 	void empiezo() :
@@ -262,7 +186,12 @@ TOKEN :
 
 	{
 		< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET>
+		
 	}
+	
+	void Parametros(): { } {
+	  listavar()
+	  }
 
 	void instructionBlock() : {}
     {
@@ -276,7 +205,7 @@ TOKEN :
 
 	void instruction() : {}
     {
-        command() | controlStructure()  | <NOP>
+        command() | controlStructure()  | <NOP> <DP >
     }
 
 	void controlStructure() : {}
@@ -286,7 +215,7 @@ TOKEN :
 
     void ifControl() : {}
     {
-        <IF> <DP >  condition() <THEN> <DP > instructionBlock() [<ELSE> <DP > instructionBlock()]
+        <IF> <DP >  condition() <THEN> <DP > instructionBlock() [<ELSE> <DP > ListaInstrucciones() ]
     }
 
     void whileControl() : {}
@@ -358,4 +287,76 @@ TOKEN :
 	{ }
 	{
 	  < CANJUMPTOTHE > < DP > (num()| < NAME >) < COMMA > direction()
+	}
+
+	void command():
+	{	
+		
+		
+	}
+
+	
+	{
+		
+		  (
+		  
+		 	<MOV> <DP > num() 
+		| 	<HOP>  <DP > <CHIPS > <COMMA > num() 
+		| 	<GO>   <DP > (num()|< NAME >) < COMMA > (num()|< NAME >) 
+		|  <PUT> 	<DP > (num()|< NAME >) <COMMA > (<CHIPS >|< BALLOONS >) 		  			
+		|  <PICK> <DP >   (num()|< NAME >) <COMMA > (<CHIPS >|< BALLOONS >) 
+	    |  < POP > <DP > (num()|< NAME >) 
+	    |  < ASSINGTO > <DP > num() < COMMA > <NAME > 
+	    |  < GOTO > <DP > (num()|< NAME >) < COMMA > (num()|< NAME >) 
+	    |  < MOVE > <DP > (num()|< NAME >) 
+	    |  < TURN > <DP > turn() 
+	    |  < MOVETOTHE > <DP > (num()|< NAME >) < COMMA > moveToThe()  
+	    |  < MOVEINDIR > <DP > (num()|< NAME >) < COMMA > direction() 
+	    |  < JUMPTOTHE > <DP > (num()|< NAME >) < COMMA > moveToThe() 
+	    |  < JUMPINDIR > <DP > (num()|< NAME >) < COMMA > direction() 
+	    |  < FACE > <DP > direction() <PCERRAR >
+
+		)+
+
+ 	}
+
+	void turn():
+	{
+	}
+	{
+	  < LEFT > | < RIGHT > | < AROUND > 
+	}
+
+	void moveToThe():
+	{
+	}
+	{
+	  < LEFT > | < RIGHT > | < BACK > | < EITHER_FRONT >
+	}
+
+
+	
+	/**
+	 * Unsigned decimal number
+	 * @return the corresponding value of the string
+	 * @error  corresponding value is too large
+	 */
+
+	int num() throws Error:
+	{	
+		int total=1;
+	}
+	{
+		<NUM>
+		{
+			try 
+			{
+				total = Integer.parseInt(token.image);
+			} 
+			catch (NumberFormatException ee) 
+			{
+				throw new Error("Number out of bounds: "+token.image+" !!");
+			}
+			return total;
+		}
 	}
