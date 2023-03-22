@@ -109,6 +109,7 @@ TOKEN: /* Nombres de Comandos */
         |	<RIGHT_BRACKET:     "]"  >
         |	<PABRIR:     "("  >
         |	<PCERRAR:     ")"  >
+		|	<PALITO:     "|"  >
         
         		
         
@@ -260,13 +261,17 @@ TOKEN :
 	}
 
 	{
-		< NAME > instructionBlock()
+		< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET>
 	}
 
 	void instructionBlock() : {}
     {
-        <LEFT_BRACKET> ( instruction() <PYC> )* <RIGHT_BRACKET>
+        <LEFT_BRACKET> ListaInstrucciones() <RIGHT_BRACKET>
     }
+
+	void ListaInstrucciones(): {}{
+		instruction() (<PYC> instruction())*
+	}
 	
 
 	void instruction() : {}
