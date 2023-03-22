@@ -277,7 +277,7 @@ TOKEN :
 
     void ifControl() : {}
     {
-        <IF> <DP >  condition() <THEN> <DP > instructionBlock() <ELSE> <DP > instructionBlock()
+        <IF> <DP >  condition() <THEN> <DP > instructionBlock() [<ELSE> <DP > instructionBlock()]
     }
 
     void whileControl() : {}
@@ -303,10 +303,21 @@ TOKEN :
 	{
 	}
 	{
-	  < FACING > < DP >
+	  < FACING > < DP > num()
 
 	}
 
+	void canPut():
+	{
+	}
+	{
+	(num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >) 
+	  }
 
-	
+	void canPick():
+	{
+	}
+	{
+	  (num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >)
+	}
 
