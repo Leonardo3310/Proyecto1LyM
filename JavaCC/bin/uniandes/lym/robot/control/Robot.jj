@@ -75,7 +75,11 @@ TOKEN: /* Nombres de Comandos */
         |  < MOVEINDIR:  "MOVEINDIR" >
         |  < JUMPTOTHE:  "JUMPTOTHE" >
         |  < JUMPINDIR:  "JUMPINDIR" >		
-        |  < NOP:  "NOP" >
+        |  < NOP:  "NOP" >		
+        |  < NORTH:  "NORTH" >		
+        |  < WEST:  "WEST" >		
+        |  < SOUTH:  "SOUTH" >		
+        |  < EAST:  "EAST" >
         //CONTROL STRUCTURE		
         |  < IF:  "IF" >
         |  < THEN:  "THEN" >
@@ -298,12 +302,18 @@ TOKEN :
 	  facing()| canPut() | canPick()| canMoveInDir()| canJumpInDir()| canMoveToThe()| canJumpToThe()| < NOT > <DP> condition() 
 	}
 
+	void direction():
+	{
+	}
+	{
+	  < NORTH > | < WEST > | < EAST > | < SOUTH >
+	}
 
 	void facing ():
 	{
 	}
 	{
-	  < FACING > < DP > num()
+	  < FACING > < DP > direction()
 
 	}
 
@@ -320,4 +330,9 @@ TOKEN :
 	{
 	  (num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >)
 	}
+
+
+	
+
+
 
