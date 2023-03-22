@@ -226,7 +226,7 @@ TOKEN :
 	{
 	}
 	{
-	  < ROBOT_R > (variables())? procs()
+	  < ROBOT_R > (variables())? procs() instructionBlock()
 	}
 
 	void procs() :
@@ -321,18 +321,36 @@ TOKEN :
 	{
 	}
 	{
-	(num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >) 
+		< CANPUT > <DP > (num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >) 
 	  }
 
 	void canPick():
 	{
 	}
 	{
-	  (num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >)
+	 < CANPICK > <DP >  (num()| < NAME >) < COMMA > (< CHIPS > | < BALLOONS >)
 	}
 
-
+	void canMoveInDir():
+	{ }
+	{
+	  < CANMOVEINDIR > < DP > (num()| < NAME >) < COMMA > direction()
+	}
 	
+	void canJumpInDir():
+	{ }
+	{
+	  < CANJUMPINDIR > < DP > (num()| < NAME >) < COMMA > direction()
+	}
 
+	void canMoveToThe():
+	{ }
+	{
+	  < CANMOVETOTHE > < DP > (num()| < NAME >) < COMMA > direction()
+	}
 
-
+	void canJumpToThe():
+	{ }
+	{
+	  < CANJUMPTOTHE > < DP > (num()| < NAME >) < COMMA > direction()
+	}
