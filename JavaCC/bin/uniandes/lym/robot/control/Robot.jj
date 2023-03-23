@@ -201,7 +201,7 @@ TOKEN :
 	}
 
 	void procedimiento():
-	{
+	{String nameProcedimiento;
 	}
 	{
 		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
