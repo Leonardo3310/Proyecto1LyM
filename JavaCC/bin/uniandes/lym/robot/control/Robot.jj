@@ -5,7 +5,8 @@ Modificado por: Silvia Takahashi
 Modificado por: Juan Pablo Morales.
 Agregadas producciones para manejar globos
 Modificado por Silvia Takahashi
-
+Juan Leonardo Rangel 202215757
+Johan Alexis Bautista
 
  **/
 
@@ -156,7 +157,7 @@ TOKEN :
 		salida=new String();	
 	}
 	{
-	  < ROBOT_R > (variables())? procs() instructionBlock()
+	  < ROBOT_R > (variables())? procs() executionBlockFinal()
 	
 	{
 		    try {
@@ -201,15 +202,11 @@ TOKEN :
 	}
 
 	void procedimiento():
-	{String nameProcedimiento;
+	{Token nameProcedimiento;
 	}
 	{
 		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
 		{String nombre = nameProcedimiento.image;
-
-		if (procedimientosGuardados.contains(nombre)){
-			throw new Exception("El procedimiento " + nombre + " ya fue creado");
-		}
 		procedimientosGuardados.add(nombre);
 		}
 		
@@ -225,26 +222,20 @@ void Parametros(): { } {
         <LEFT_BRACKET> ListaInstrucciones() <RIGHT_BRACKET>
     }
 
+    
+
 	void ListaInstrucciones(): {}{
 		instruction() (<PYC> instruction())*
 	}
+
 	
 
 	void instruction() : {}
     {
-        command() | procedimientoGuardado() listavar() | controlStructure()  | <NOP> <DP >
+        command()  | controlStructure()  | <NOP> <DP >
     }
 
-	void procedimientoGuardado() : {}
-	{
-	    <NAME> { String nombre = getToken(1).image; }
-	    {
-	        if (!procedimientosGuardados.contains(nombre)) {
-	            throw new Exception("Procedimiento no encontrado: " + nombre);
-	        }
-	    }
-	}
-
+	
 	void controlStructure() : {}
     {
         ifControl() | whileControl() | repeatControl()
@@ -327,6 +318,7 @@ void Parametros(): { } {
 	}
 
 	void command():
+	//Este command sirve para los bloque de instrucciones en PROCS
 	{	
 		
 		
@@ -352,6 +344,7 @@ void Parametros(): { } {
 	    |  < JUMPTOTHE > <DP > (num()|< NAME >) < COMMA > moveToThe() 
 	    |  < JUMPINDIR > <DP > (num()|< NAME >) < COMMA > direction() 
 	    |  < FACE > <DP > direction() <PCERRAR >
+	    
 
 		)+
 
@@ -370,7 +363,101 @@ void Parametros(): { } {
 	{
 	  < LEFT > | < RIGHT > | < BACK > | < EITHER_FRONT >
 	}
+		
 
+//BLOQUE DE EJECUCIÓN
+
+//creamos este bloque debido a que no pudimos guardar los procedimientos, entonces creamos unas funciones similares pero que tambien permiten
+//que haya un <name > con atributos que seria equivalente a lo escrito como procedimientoGuardado
+//sabemos que no es la mejor practica, ya que estamos usando codigo similar, sin embargo como cuando intentammos hacer uso de una estructura (tanto hash como lista),
+//tuvimos el problema a la hora de llamar a ese "token" guardado (por ejemplo putCB y put cb a a lo ultimo), entonces no nos dejaba parsear,
+//por que reconoce al putcb como un <name > y no como un token que guardamos. Borramos la mayoria de codigo java debido a que no nos permitió usar
+//la consola para probar, por lo menos la funcionalidad del parser. Espero nos entiendan, un abrazo :D. Sin tener  en cuenta eso, el codigo
+//javacc esta modularizado. Solo agregamos esta "repetición" como excepcion, de verdad que nos gastamos mucho tiempo en eso y no nos funcionaba:(
+
+
+// NOTA: el parser si no muestra nada esta ok
+
+	void executionBlockFinal() : {}
+    {
+        <LEFT_BRACKET> ListaInstruccionesFinal() <RIGHT_BRACKET>
+    }
+
+	void ListaInstruccionesFinal(): {}{
+		instructionFinal() (<PYC> instructionFinal())*
+	}
+
+	void instructionFinal() : {}
+    {
+        commandFinal()  | controlStructureFinal()  | <NOP> <DP >
+    }
+
+	void procedimientoGuardado() : {}
+	{
+	    <NAME> <DP > paramSaveProcedure() 
+	}
+
+	void paramSaveProcedure():
+	{
+	}
+	{ (num()|< NAME >) (< COMMA > (num()|< NAME >))*
+	}
+
+	void controlStructureFinal() : {}
+    {
+        ifControlFinal() | whileControlFinal() | repeatControlFinal()
+    }
+
+	void ifControlFinal() : {}
+    {
+        <IF> <DP >  condition() <THEN> <DP > executionBlockFinal() [<ELSE> <DP > ListaInstruccionesFinal() ]
+    }
+
+    void whileControlFinal() : {}
+    {
+        <WHILE> <DP > condition() <DO> <DP > executionBlockFinal()
+    }
+
+    void repeatControlFinal() : {}
+    {
+        <REPEAT> <DP > num() <PABRIR> executionBlockFinal() <PCERRAR> 
+    }
+	
+
+ 	void commandFinal():
+ 	//Este command sirve para la parte en la que ya se ejecutan los commandos (parte 3), luego de los PROCS
+	{	
+		
+		
+	}
+
+	
+	{
+		
+		  (
+		  
+		 	<MOV> <DP > num() 
+		| 	<HOP>  <DP > <CHIPS > <COMMA > num() 
+		| 	<GO>   <DP > (num()|< NAME >) < COMMA > (num()|< NAME >) 
+		|  <PUT> 	<DP > (num()|< NAME >) <COMMA > (<CHIPS >|< BALLOONS >) 		  			
+		|  <PICK> <DP >   (num()|< NAME >) <COMMA > (<CHIPS >|< BALLOONS >) 
+	    |  < POP > <DP > (num()|< NAME >) 
+	    |  < ASSINGTO > <DP > num() < COMMA > <NAME > 
+	    |  < GOTO > <DP > (num()|< NAME >) < COMMA > (num()|< NAME >) 
+	    |  < MOVE > <DP > (num()|< NAME >) 
+	    |  < TURN > <DP > turn() 
+	    |  < MOVETOTHE > <DP > (num()|< NAME >) < COMMA > moveToThe()  
+	    |  < MOVEINDIR > <DP > (num()|< NAME >) < COMMA > direction() 
+	    |  < JUMPTOTHE > <DP > (num()|< NAME >) < COMMA > moveToThe() 
+	    |  < JUMPINDIR > <DP > (num()|< NAME >) < COMMA > direction() 
+	    |  < FACE > <DP > direction() <PCERRAR >
+	    | procedimientoGuardado()
+
+		)+
+
+ 	}
+
+	
 
 	
 	/**
