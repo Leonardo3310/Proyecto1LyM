@@ -149,13 +149,33 @@ TOKEN :
 	
 
 	
-	void empiezo() :
-	{
-	}
-	{
-	  < ROBOT_R > (variables())? procs() instructionBlock()
+
+    
+	boolean robotr(Console sistema):
+	{	
+		
+		int x,y;
+		salida=new String();	
 	}
 
+	
+	{
+		 < ROBOT_R > (variables())? procs() instructionBlock()
+
+		{
+		    try {
+	    			 Thread.sleep(900);
+	    	    } catch (InterruptedException e) {
+	    			        System.err.format("IOException: %s%n", e);
+	    		    }
+	    			 
+			sistema.printOutput(salida);
+			return true;
+		}
+
+    	| <EOF> {return false;} 
+	}
+	
 	void procs() :
 	{
 	}
