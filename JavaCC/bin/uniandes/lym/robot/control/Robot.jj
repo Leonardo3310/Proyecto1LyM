@@ -207,7 +207,7 @@ TOKEN :
 		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
 		{String nombre = nameProcedimiento.image;
 
-		if (procedimientosGuardados.containsKey(nombre)){
+		if (procedimientosGuardados.contains(nombre)){
 			throw new Exception("El procedimiento " + nombre + " ya fue creado");
 		}
 		procedimientosGuardados.add(nombre);
