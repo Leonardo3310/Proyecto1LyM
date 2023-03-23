@@ -36,8 +36,7 @@ import java.util.LinkedList;
 public class Robot 
 {
 
-  	private HashMap<String, String> procedimientos = new HashMap<String, String>();
-
+  	private ArrayList<String> procedimientosGuardados = new ArrayList<String>();
 
 	private RobotWorldDec world;
 	
@@ -186,20 +185,19 @@ TOKEN :
 	{
 	}
 	{
-		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> Paramethers=(Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
+		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
 		{String nombre = nameProcedimiento.image;
-		String Parame = Paramethers;
 
-		if (procedimiento.containsKey(varName)){
+		if (procedimientosGuardados.containsKey(nombre)){
 			throw new Exception("El procedimiento " + nombre + " ya fue creado");
 		}
-		variables.put(nombre, Parame);
+		procedimientosGuardados.add(nombre);
 		}
 		
 	}
 
-	
-	void Parametros(): { } {
+
+void Parametros(): { } {
 	  listavar()
 	  }
 
@@ -215,22 +213,19 @@ TOKEN :
 
 	void instruction() : {}
     {
-        command() | controlStructure() | createdProdeture() | <NOP> <DP >
+        command() | procedimientoGuardado() listavar() | controlStructure()  | <NOP> <DP >
     }
 
-void createdProdeture() : {}
+void procedimientoGuardado() : {}
 {
-    <NAME> <LEFT_BRACKET> Parametros() <RIGHT_BRACKET>
+    <NAME> { String nombre = getToken(1).image; }
     {
-        String nombre = token.image;
-        String args = (String) jjtGetChild(0).jjtAccept(this, null);
-
-        if (!procedimientos.containsKey(nombre)) {
-            throw new Exception("El procedimiento " + nombre + " no ha sido declarado");
+        if (!procedimientosGuardados.contains(nombre)) {
+            throw new Exception("Procedimiento no encontrado: " + nombre);
         }
     }
 }
-
+cor
 	void controlStructure() : {}
     {
         ifControl() | whileControl() | repeatControl()
