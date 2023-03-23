@@ -149,20 +149,16 @@ TOKEN :
 	
 
 	
-
-    
-	boolean robotr(Console sistema):
+	boolean robotr(Console sistema) :
 	{	
 		
 		int x,y;
 		salida=new String();	
 	}
-
+	{
+	  < ROBOT_R > (variables())? procs() instructionBlock()
 	
 	{
-		 < ROBOT_R > (variables())? procs() instructionBlock()
-
-		{
 		    try {
 	    			 Thread.sleep(900);
 	    	    } catch (InterruptedException e) {
@@ -172,10 +168,12 @@ TOKEN :
 			sistema.printOutput(salida);
 			return true;
 		}
+		
 
     	| <EOF> {return false;} 
 	}
-	
+
+
 	void procs() :
 	{
 	}
@@ -237,15 +235,15 @@ void Parametros(): { } {
         command() | procedimientoGuardado() listavar() | controlStructure()  | <NOP> <DP >
     }
 
-void procedimientoGuardado() : {}
-{
-    <NAME> { String nombre = getToken(1).image; }
-    {
-        if (!procedimientosGuardados.contains(nombre)) {
-            throw new Exception("Procedimiento no encontrado: " + nombre);
-        }
-    }
-}
+	void procedimientoGuardado() : {}
+	{
+	    <NAME> { String nombre = getToken(1).image; }
+	    {
+	        if (!procedimientosGuardados.contains(nombre)) {
+	            throw new Exception("Procedimiento no encontrado: " + nombre);
+	        }
+	    }
+	}
 
 	void controlStructure() : {}
     {
