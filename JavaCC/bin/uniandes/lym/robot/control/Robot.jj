@@ -204,7 +204,7 @@ TOKEN :
 	{String nameProcedimiento;
 	}
 	{
-		nameProcedimiento=< NAME > <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
+		nameProcedimiento=(< NAME >) <LEFT_BRACKET> <PALITO> (Parametros())? <PALITO> ListaInstrucciones() <RIGHT_BRACKET> 
 		{String nombre = nameProcedimiento.image;
 
 		if (procedimientosGuardados.contains(nombre)){
